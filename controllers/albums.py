@@ -1,6 +1,7 @@
 from flask import *
 from extensions import *
 from config import *
+from os import *
 
 albums = Blueprint('albums', __name__, template_folder='templates')
 
@@ -15,22 +16,28 @@ def albums_edit_route():
 
   	if request.method == 'POST':
 
-  		user = request.form.get("user")
-		albumID = request.form.get('albumID')
+  		user = request.args.get('username')
+		albumID = request.form.get('albumid')
 
 		db = connect_to_database()
   		cur = db.cursor()
 
   		if request.form.get('op') == 'delete':
-  			cur.execute("SELECT picID, form from Contain WHERE albumID=%s", [albumID])
+  			cur.execute("SELECT picID from Contain WHERE albumID=%s", [albumID])
   			badPics = cur.fetchall()
-	  		cur.execute("DELETE FROM Contain WHERE albumID=%s", [albumID])
 	  		for x in badPics:
-  				cur.execute("DELETE FROM Photo WHERE picID = %s", [x['picID']])
+	  			picid = x['picID']
+	  			cur.execute("SELECT format from Photo where picID = %s", [x['picID']])
+	  			format = cur.fetchall()
+	  			format = format[0]['format']
+	  			location = "static/images/images/" + picid + "." + format
+	  			remove(path.join(getcwd(), location))
+	  			cur.execute("DELETE FROM Contain WHERE picID=%s", [picid])
+  				cur.execute("DELETE FROM Photo WHERE picID = %s", [picid])
 	  		cur.execute("DELETE FROM Album WHERE albumID=%s", [albumID])
 		
 	  	if request.form.get('op') == 'add':
-	  		newAlbum = request.form.get('newAlbum')
+	  		newAlbum = request.form.get('title')
 	  		insert_statement = "INSERT INTO Album (title, username) VALUES (%s, %s)"
 	  		arguments = ([newAlbum], [user])
 	  		cur.execute(insert_statement, arguments)

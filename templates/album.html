@@ -12,11 +12,12 @@
     	{%for pic in pics%}
     		<table>
 	          <tr>
-			    <td><img src="/static/images/images/{{pic['picID']}}.jpg" style="width:210px;height:210px;"></td>
+			    <td><img src="/static/images/images/{{pic['picID']}}.jpg" style="width:210px;height:210px;">
 			    <td>
 			    	<form action="/album/edit?albumid={{albumid}}" method='POST'>
 			    		<input type="hidden" name="op" value="delete">
 			    		<input type="hidden" name="picid" value="{{pic['picID']}}">
+			    		<input type="hidden" name="albumid" value="{{albumid}}">
 			    		<input type="submit" value="Delete" id="delete_pic_{{pic['picID']}}">
 			    	</form>
 			    </td>
@@ -28,7 +29,8 @@
 		    <td>
 		    	<form action="/album/edit?albumid={{albumid}}" method='POST'>
 		    		<input type="hidden" name="op" value="add">
-		    		<input type="file" name="newFile" id="file_input">
+		    		<input type="hidden" name="albumid" value="{{albumid}}">
+		    		<input type="file" name="file" id="file_input">
 		    		<input type="submit" name="Submit" id="file_submit">
 		    	</form>
 		    </td>

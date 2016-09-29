@@ -1,3 +1,5 @@
 controllers/*.pyc
 controllers/*.pyc
 static/images/images/*.jpg
+controllers/*.pyc
+static/images/images/*.jpg
