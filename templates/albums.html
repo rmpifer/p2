@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block content %}
+    <h1>ALBUMS</h1>
+    {% if not edit %}
+	    {%for album in albumTitles%}
+
+	    	<h3><a href="/album?albumid={{album['albumID']}}" id="album_{{album['albumID']}}_link">{{album['title']}}</a></h3>
+	    {% endfor %}
+	    <h3><a href="/albums/edit?username={{user}}" id="user_albums_edit_{{user}}">Edit Album</a></h3>
+	{%endif%}
+    {% if edit %}
+    	{%for album in albumTitles%}
+	        <table>
+	          <tr>
+			    <td><b>{{album['title']}}</b></td>
+			    <td>
+			    	<a href="/album/edit?albumid={{album['albumID']}}">Edit</a>
+			    </td>
+			    <td>
+			    	<form action="/albums/edit?username={{user}}" method='POST' id="delete_album_{{album['albumID']}}">
+			    		<input type="hidden" name="op" value="delete">
+			    		<input type="hidden" name="user" value="{{user}}">
+			    		<input type="hidden" name="albumID" value="{{album['albumID']}}">
+			    		<input type="submit" value="Delete">
+			    	</form>
+			 	</td>
+
+			  </tr><tr></tr>
+			</table>
+		{% endfor %}
+		<table>
+		  <tr>
+		    <td><b>Add new album</b></td>
+		    <td>
+		    	<form action="/albums/edit?username={{user}}" method='POST'>
+		    		<input type="hidden" name="op" value="add">
+		    		<input type="hidden" name="user" value="{{user}}" >
+		    		<input type="text" name="newAlbum" value="" id="album_add_name" >
+		    		
+		    		<input type="submit" value="Add" id="album_add_submit">
+		    	</form>
+		    </td>
+		</table>
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block content %}
+	{%for x in title%}
+		<h1>{{x['title']}}</h1>
+	{%endfor%}
+	{% if not edit %}
+	    {%for pic in pics%}
+	    	<img src="/static/images/images/{{pic['picID']}}.jpg" style="width:210px;height:210px;"><br/>
+	    {% endfor %}
+	{% endif %}
+    {% if edit %}
+    	{%for pic in pics%}
+    		<table>
+	          <tr>
+			    <td><img src="/static/images/images/{{pic['picID']}}.jpg" style="width:210px;height:210px;"></td>
+			    <td>
+			    	<form action="/album/edit?albumid={{albumid}}" method='POST'>
+			    		<input type="hidden" name="op" value="delete">
+			    		<input type="hidden" name="picid" value="{{pic['picID']}}">
+			    		<input type="submit" value="Delete" id="delete_pic_{{pic['picID']}}">
+			    	</form>
+			    </td>
+			</table>
+		{% endfor %}
+		<table>
+          <tr>
+		    <td><b>Add a new photo</b></td>
+		    <td>
+		    	<form action="/album/edit?albumid={{albumid}}" method='POST'>
+		    		<input type="hidden" name="op" value="add">
+		    		<input type="file" name="newFile" id="file_input">
+		    		<input type="submit" name="Submit" id="file_submit">
+		    	</form>
+		    </td>
+		</table>
+    {% endif %}
+{% endblock %}

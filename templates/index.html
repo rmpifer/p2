@@ -1,7 +1,20 @@
 {% extends "base.html" %}
 {% block content %}
-    <h1>INDEX</h1>
-    <p class="center">
-      Welcome!
+
+	<meta name="description" content="Photo Album">
+	<meta name="author" content="Ryan Pifer">
+
+    <title>Photo Album</title>
+
+    <p class="left">
+      	<h1>Welcome to our Photo Album!</h1>
+
+  		{% for result in results %}
+
+			<h3><a href="/albums?username={{result['username']}}" id=user_albums_{{result['username']}}>{{result['username']}}</a></h3>
+
+  		{% endfor %}
+
+      	<footer>Authored: Ryan Pifer, Semptember 2016</footer>
     </p>
 {% endblock %}
