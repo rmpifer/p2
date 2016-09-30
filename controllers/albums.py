@@ -27,7 +27,7 @@ def albums_edit_route():
   			badPics = cur.fetchall()
 	  		for x in badPics:
 	  			picid = x['picID']
-	  			cur.execute("SELECT format from Photo where picID = %s", [x['picID']])
+	  			cur.execute("SELECT format from Photo where picID = %s", [picid])
 	  			format = cur.fetchall()
 	  			format = format[0]['format']
 	  			location = "static/images/images/" + picid + "." + format

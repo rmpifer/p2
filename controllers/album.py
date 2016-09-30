@@ -53,15 +53,14 @@ def album_edit_route():
 	        VALUES (%s, %s, %s, %s", values)
 
 		if request.form.get('op') == "delete":
-			ID = request.form.get('picid')
-			cur.execute("SELECT picID, format from Photo WHERE picID = %s", ID)
-			badPic = cur.fetchall()
-			for x in badPic:
-				format = x['format']
-				pic = "static/images/images/" +ID + "." + format
-				os.remove(os.path.join(getcwd(), pic))
-				cur.execute("DELETE FROM Contain WHERE picID = %s", ID)
-				cur.execute("DELETE FROM Photo WHERE picID = %s", ID)
+			picid = request.form.get('picid')
+			cur.execute("SELECT form from Photo WHERE photoID=%s", [picid])
+  			format = cur.fetchall()
+  			format = format[0]['format']
+  			location = "static/images/images/" + picid + "." + format
+  			remove(path.join(getcwd(), location))
+  			cur.execute("DELETE FROM Contain WHERE picID=%s", [picid])
+			cur.execute("DELETE FROM Photo WHERE picID = %s", [picid])
 
 	cur.execute("SELECT picID FROM Contain WHERE albumID = %s", [albumid])
 	pics = cur.fetchall()
