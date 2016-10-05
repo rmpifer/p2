@@ -1,7 +1,16 @@
 {% extends "base.html" %}
 {% block content %}
     <h1>PIC</h1>
-    <p class="important">
-      Welcome!
-    </p>
+    <img src="/static/images/images/{{picid}}.{{format}}" style="width:420px;height:420px;"><br/>
+    {%if not isFirst%}
+    	<a href="/pic?picid={{previd}}" id="pic_{{previd}}_link">Previous&nbsp;</a>
+    {%endif%}
+
+	<a href="/album?albumid={{albumid}}">Return to Album&nbsp;</a>
+
+    {%if not isLast%}
+    	<a href="/pic?picid={{nextid}}" id="pic_{{nextid}}_link">Next</a>
+    {%endif%}
+
+
 {% endblock %}

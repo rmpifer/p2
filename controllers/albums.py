@@ -32,6 +32,7 @@ def albums_edit_route():
 	  			format = format[0]['format']
 	  			location = "static/images/images/" + picid + "." + format
 	  			remove(path.join(getcwd(), location))
+	  			print location, "deleted"
 	  			cur.execute("DELETE FROM Contain WHERE picID=%s", [picid])
   				cur.execute("DELETE FROM Photo WHERE picID = %s", [picid])
 	  		cur.execute("DELETE FROM Album WHERE albumID=%s", [albumID])
