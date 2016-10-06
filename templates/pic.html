@@ -3,13 +3,13 @@
     <h1>PIC</h1>
     <img src="/static/images/images/{{picid}}.{{format}}" style="width:420px;height:420px;"><br/>
     {%if not isFirst%}
-    	<a href="/pic?picid={{previd}}" id="prev_pic">Previous&nbsp;</a>
+    	<a href={{url_for('pic.pic_route', picid=previd)}} id="prev_pic">Previous&nbsp;</a>
     {%endif%}
 
-	<a href="/album?albumid={{albumid}}" id="parent_album">Return to Album&nbsp;</a>
+	<a href={{url_for('album.album_route', albumid=albumid)}} id="parent_album">Return to Album&nbsp;</a>
 
     {%if not isLast%}
-    	<a href="/pic?picid={{nextid}}" id="next_pic">Next</a>
+    	<a href={{url_for('pic.pic_route', picid=nextid)}} id="next_pic">Next</a>
     {%endif%}
 
 

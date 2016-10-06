@@ -5,20 +5,20 @@
 	{%endfor%}
 	{% if not edit %}
 	    {%for pic in pics%}
-	    	<a href="/pic?picid={{pic['picID']}}" id="pic_{{pic['picID']}}_link"><img src="/static/images/images/{{pic['picID']}}.{{pic.format}}" style="width:210px;height:210px;"></a><br/>
+	    	<a href={{url_for('pic.pic_route', picid=pic.picID)}} id="pic_{{pic.picID}}_link"><img src="/static/images/images/{{pic['picID']}}.{{pic.format}}" style="width:210px;height:210px;"></a><br/>
 	    {% endfor %}
 	{% endif %}
     {% if edit %}
     	{%for pic in pics%}
     		<table>
 	          <tr>
-			    <td><a href="/pic?picid={{pic['picID']}}" id="pic_{{pic['picID']}}_link"><img src="/static/images/images/{{pic['picID']}}.{{pic.format}}" style="width:210px;height:210px;"></a>
+			    <td><a href={{url_for('pic.pic_route', picid=pic.picID)}} id="pic_{{pic.picID}}_link"><img src="/static/images/images/{{pic.picID}}.{{pic.format}}" style="width:210px;height:210px;"></a>
 			    <td>
 			    	<form action="/album/edit?albumid={{albumid}}" method='POST'>
 			    		<input type="hidden" name="op" value="delete">
-			    		<input type="hidden" name="picid" value="{{pic['picID']}}">
+			    		<input type="hidden" name="picid" value="{{pic.picID}}">
 			    		<input type="hidden" name="albumid" value="{{albumid}}">
-			    		<input type="submit" value="Delete" id="delete_pic_{{pic['picID']}}">
+			    		<input type="submit" value="Delete" id="delete_pic_{{pic.picID}}">
 			    	</form>
 			    </td>
 			</table>
@@ -27,7 +27,7 @@
           <tr>
 		    <td><b>Add a new photo</b></td>
 		    <td>
-		    	<form action="/album/edit?albumid={{albumid}}" method='POST'>
+		    	<form action={{url_for('album.album_edit_route', albumid=albumid)}} method='POST'>
 		    		<input type="hidden" name="op" value="add">
 		    		<input type="hidden" name="albumid" value="{{albumid}}">
 		    		<input type="file" name="file" id="file_input">
