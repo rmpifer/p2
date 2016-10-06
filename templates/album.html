@@ -5,14 +5,14 @@
 	{%endfor%}
 	{% if not edit %}
 	    {%for pic in pics%}
-	    	<a href="/pic?picid={{pic['picID']}}" id="pic_{{pic['picID']}}_link"><img src="/static/images/images/{{pic['picID']}}.jpg" style="width:210px;height:210px;"></a><br/>
+	    	<a href="/pic?picid={{pic['picID']}}" id="pic_{{pic['picID']}}_link"><img src="/static/images/images/{{pic['picID']}}.{{pic.format}}" style="width:210px;height:210px;"></a><br/>
 	    {% endfor %}
 	{% endif %}
     {% if edit %}
     	{%for pic in pics%}
     		<table>
 	          <tr>
-			    <td><a href="/pic?picid={{pic['picID']}}" id="pic_{{pic['picID']}}_link"><img src="/static/images/images/{{pic['picID']}}.jpg" style="width:210px;height:210px;"></a>
+			    <td><a href="/pic?picid={{pic['picID']}}" id="pic_{{pic['picID']}}_link"><img src="/static/images/images/{{pic['picID']}}.{{pic.format}}" style="width:210px;height:210px;"></a>
 			    <td>
 			    	<form action="/album/edit?albumid={{albumid}}" method='POST'>
 			    		<input type="hidden" name="op" value="delete">

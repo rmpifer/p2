@@ -49,7 +49,7 @@ def album_edit_route():
 				sequenceNum = int(cur.fetchall()) + 1
 				filename = (m.hexdigest(), filename.rsplit('.', 1)[1])
 				values = (sequenceNum, albumID, filename, "")
-				cur.execute("INSERT INTO Photo (picID, format) VALUES (%s, %s", filename)
+				cur.execute("INSERT INTO Photo (picID, format) VALUES (%s, %s)", filename)
 				cur.execute("INSERT INTO Contain (sequenceNum, albumID, picID, caption) VALUES (%s, %s, %s, %s)", values)
 
 		print "before delete"
@@ -65,7 +65,7 @@ def album_edit_route():
 			cur.execute("DELETE FROM Photo WHERE picID = %s", [picid])
 			
 
-	cur.execute("SELECT picID FROM Contain WHERE albumID = %s", [albumid])
+	cur.execute("SELECT Contain.picID, Photo.format FROM Contain JOIN Photo WHERE Contain.picid = Photo.picid AND Contain.albumID = %s", [albumid])
 	pics = cur.fetchall()
 	cur.execute("SELECT title FROM Album WHERE albumID = %s", [albumid])
 	title = cur.fetchall()
@@ -87,7 +87,7 @@ def album_route():
 
 	db = connect_to_database()
 	cur = db.cursor()
-	cur.execute("SELECT picID FROM Contain WHERE albumID = %s", [albumid])
+	cur.execute("SELECT Contain.picID, Photo.format FROM Contain JOIN Photo WHERE Contain.picid = Photo.picid AND Contain.albumID = %s", [albumid])
 	pics = cur.fetchall()
 	cur.execute("SELECT title FROM Album WHERE albumID = %s", [albumid])
 	title = cur.fetchall()
