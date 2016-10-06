@@ -6,7 +6,7 @@
 
 	    	<h3><a href={{url_for('album.album_route',albumid=album.albumID)}} id="album_{{album.albumID}}_link">{{album['title']}}</a></h3>
 	    {% endfor %}
-	    <h3><a href="/albums/edit?username={{user}}" id="user_albums_edit_{{user}}">Edit Album</a></h3>
+	    <h3><a href={{url_for('albums.albums_edit_route', username=user)}} id="user_albums_edit_{{user}}">Edit Album</a></h3>
 	{%endif%}
     {% if edit %}
     	{%for album in albumTitles%}
