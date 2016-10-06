@@ -1,7 +1,7 @@
 from flask import Flask, render_template
 import extensions
 import controllers
-import * from config
+from config import *
 
 # Initialize Flask app with the template folder address
 app = Flask(__name__, template_folder='templates')
