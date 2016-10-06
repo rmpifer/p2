@@ -7,10 +7,10 @@ import config
 app = Flask(__name__, template_folder='templates')
 
 # Register the controllers
-app.register_blueprint(controllers.album)
-app.register_blueprint(controllers.albums)
-app.register_blueprint(controllers.pic)
-app.register_blueprint(controllers.main)
+app.register_blueprint(controllers.album, url_prefix=env['prefix'])
+app.register_blueprint(controllers.albums, url_prefix=env['prefix'])
+app.register_blueprint(controllers.pic, url_prefix=env['prefix'])
+app.register_blueprint(controllers.main, url_prefix=env['prefix'])
 
 # Listen on external IPs
 # For us, listen to port 3000 so you can just run 'python app.py' to start the server
