@@ -20,9 +20,12 @@ def pic_route():
 
 	cur.execute("SELECT albumID FROM Contain WHERE picID = %s", [picid])
 	albumid = cur.fetchall()
-	
-	if len(albumid) == 0:
-		abort(404)
+
+	if not albumid:
+		response = jsonify({'message': "Bad picid"})
+  		response.status_code = 404
+  		response.status = 'error.Bad Request'
+  		return response
 
 	albumid = albumid[0]['albumID']
 	cur.execute("SELECT picID FROM Contain WHERE albumID = %s ORDER BY sequenceNum", [albumid])

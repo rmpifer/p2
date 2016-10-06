@@ -26,8 +26,11 @@ def album_edit_route():
 
 	cur.execute("SELECT title FROM Album WHERE albumID = %s", [albumid])
 	title = cur.fetchall()
-	if len(title) == 0:
-		abort(404)
+	if not title:
+		response = jsonify({'message': "Bad albumid"})
+  		response.status_code = 404
+  		response.status = 'error.Bad Request'
+  		return response
 
 	if request.method == 'POST':
 		if request.form.get('op') == 'add':
@@ -93,8 +96,11 @@ def album_route():
 	cur.execute("SELECT title FROM Album WHERE albumID = %s", [albumid])
 	title = cur.fetchall()
 
-	if len(title) == 0:
-		abort(404)
+	if not title:
+		response = jsonify({'message': "Bad albumid"})
+  		response.status_code = 404
+  		response.status = 'error.Bad Request'
+  		return response
 
 	cur.execute("SELECT Contain.picID, Photo.format FROM Contain JOIN Photo WHERE Contain.picid = Photo.picid AND Contain.albumID = %s", [albumid])
 	pics = cur.fetchall()

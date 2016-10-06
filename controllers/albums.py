@@ -35,18 +35,21 @@ def albums_edit_route():
 	  			print location, "deleted"
 	  			cur.execute("DELETE FROM Contain WHERE picID=%s", [picid])
   				cur.execute("DELETE FROM Photo WHERE picID = %s", [picid])
-	  		cur.execute("DELETE FROM Album WHERE albumID=%s", [albumID])
+				cur.execute("DELETE FROM Album WHERE albumID=%s", [albumID])
 		
-	  	if request.form.get('op') == 'add':
-	  		newAlbum = request.form.get('title')
-	  		insert_statement = "INSERT INTO Album (title, username) VALUES (%s, %s)"
-	  		arguments = ([newAlbum], [user])
-	  		cur.execute(insert_statement, arguments)
+		if request.form.get('op') == 'add':
+			newAlbum = request.form.get('title')
+			insert_statement = "INSERT INTO Album (title, username) VALUES (%s, %s)"
+			arguments = ([newAlbum], [user])
+			cur.execute(insert_statement, arguments)
 
-  	cur.execute("SELECT title, albumID FROM Album WHERE username = %s", [user])
-  	albumTitles = cur.fetchall()
-  	if len(albumTitles) == 0:
-  		abort(404)
+	cur.execute("SELECT title, albumID FROM Album WHERE username = %s", [user])
+	albumTitles = cur.fetchall()
+	if not albumTitles:
+  		response = jsonify({'message': "Bad username"})
+  		response.status_code = 404
+  		response.status = 'error.Bad Request'
+  		return response
 
 
 	options = {
@@ -68,8 +71,11 @@ def albums_route():
   		cur.execute("SELECT title, albumID FROM Album WHERE username = %s", [user])
   		albumTitles = cur.fetchall()
 
-	if len(albumTitles) == 0:
-		abort(404)
+	if not albumTitles:
+		response = jsonify({'message': "Bad username"})
+  		response.status_code = 404
+  		response.status = 'error.Bad Request'
+  		return response
 
 	options = {
 		"edit": False,
