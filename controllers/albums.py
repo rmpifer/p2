@@ -45,6 +45,8 @@ def albums_edit_route():
 
   	cur.execute("SELECT title, albumID FROM Album WHERE username = %s", [user])
   	albumTitles = cur.fetchall()
+  	if len(albumTitles) == 0:
+  		abort(404)
 
 
 	options = {
@@ -65,6 +67,9 @@ def albums_route():
   		cur = db.cursor()
   		cur.execute("SELECT title, albumID FROM Album WHERE username = %s", [user])
   		albumTitles = cur.fetchall()
+
+	if len(albumTitles) == 0:
+		abort(404)
 
 	options = {
 		"edit": False,

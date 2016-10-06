@@ -20,6 +20,10 @@ def pic_route():
 
 	cur.execute("SELECT albumID FROM Contain WHERE picID = %s", [picid])
 	albumid = cur.fetchall()
+	
+	if len(albumid) == 0:
+		abort(404)
+
 	albumid = albumid[0]['albumID']
 	cur.execute("SELECT picID FROM Contain WHERE albumID = %s ORDER BY sequenceNum", [albumid])
 	picList = cur.fetchall()

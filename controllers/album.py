@@ -19,11 +19,15 @@ def allowed_file(filename):
 @album.route('/album/edit', methods=['GET', 'POST'])
 def album_edit_route():
 
+	db = connect_to_database()
+	cur = db.cursor()
 
 	albumid = request.args.get('albumid')
 
-	db = connect_to_database()
-	cur = db.cursor()
+	cur.execute("SELECT title FROM Album WHERE albumID = %s", [albumid])
+	title = cur.fetchall()
+	if len(title) == 0:
+		abort(404)
 
 	if request.method == 'POST':
 		if request.form.get('op') == 'add':
@@ -50,6 +54,7 @@ def album_edit_route():
 				sequenceNum += 1
 				cur.execute("INSERT INTO Photo (picID, format) VALUES (%s, %s)", (picid, format ))
 				cur.execute("INSERT INTO Contain (sequenceNum, albumID, picID, caption) VALUES (%s, %s, %s, %s)", (sequenceNum, albumid, picid, ""))
+				cur.execute("UPDATE Album SET lastUpdate=CURRENT_TIMESTAMP() WHERE albumID=%s", albumid)
 
 		if request.form.get('op') == 'delete':
 			print "after delete"
@@ -61,12 +66,11 @@ def album_edit_route():
 			remove(path.join(getcwd(), location))
 			cur.execute("DELETE FROM Contain WHERE picID=%s", [picid])
 			cur.execute("DELETE FROM Photo WHERE picID = %s", [picid])
+			cur.execute("UPDATE Album SET lastUpdate=CURRENT_TIMESTAMP() WHERE albumID=%s", albumid)
 			
 
 	cur.execute("SELECT Contain.picID, Photo.format FROM Contain JOIN Photo WHERE Contain.picid = Photo.picid AND Contain.albumID = %s", [albumid])
 	pics = cur.fetchall()
-	cur.execute("SELECT title FROM Album WHERE albumID = %s", [albumid])
-	title = cur.fetchall()
 	
 
 
@@ -85,10 +89,15 @@ def album_route():
 
 	db = connect_to_database()
 	cur = db.cursor()
-	cur.execute("SELECT Contain.picID, Photo.format FROM Contain JOIN Photo WHERE Contain.picid = Photo.picid AND Contain.albumID = %s", [albumid])
-	pics = cur.fetchall()
+
 	cur.execute("SELECT title FROM Album WHERE albumID = %s", [albumid])
 	title = cur.fetchall()
+
+	if len(title) == 0:
+		abort(404)
+
+	cur.execute("SELECT Contain.picID, Photo.format FROM Contain JOIN Photo WHERE Contain.picid = Photo.picid AND Contain.albumID = %s", [albumid])
+	pics = cur.fetchall()
 
 	options = {
 		"edit": False,
