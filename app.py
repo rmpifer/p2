@@ -7,6 +7,7 @@ import config
 app = Flask(__name__, template_folder='templates')
 
 # Register the controllers
+app.secret_key = "aosndxsianus"
 app.register_blueprint(controllers.album, url_prefix=config.env['prefix'])
 app.register_blueprint(controllers.albums, url_prefix=config.env['prefix'])
 app.register_blueprint(controllers.pic, url_prefix=config.env['prefix'])
