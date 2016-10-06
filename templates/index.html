@@ -11,7 +11,7 @@
 
   		{% for result in results %}
 
-			<h3><a href="/albums?username={{result['username']}}" id=user_albums_{{result['username']}}>{{result['username']}}</a></h3>
+			<h3><a href={{url_for('albums.albums_route', username=result.username)}} id="user_albums_{{result.username}}">{{result.username}}</a></h3>
 
   		{% endfor %}
 
