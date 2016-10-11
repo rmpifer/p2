@@ -10,7 +10,8 @@ pic = Blueprint('pic', __name__, template_folder='templates')
 @pic.route('/pic', methods=['GET', 'POST'])
 def pic_route():
 
-
+	firstname = ""
+	lastname = ""
 	db = connect_to_database()
 	cur = db.cursor()
 
@@ -53,6 +54,12 @@ def pic_route():
 	owner = False
 	if 'username' in session:
 		inSession = True
+
+		cur.execute('SELECT firstname, lastname FROM User WHERE username=%s', [session['username']])
+		name = cur.fetchall()
+		firstname = name[0]['firstname']
+		lastname = name[0]['lastname']
+		
 		cur.execute("SELECT username FROM Album WHERE albumID=%s and username=%s", ([albumid], session['username']))
 		owner = cur.fetchall()
 		if len(owner) != 0:
@@ -96,6 +103,8 @@ def pic_route():
 		"isFirst": isFirst,
 		"isLast" : isLast,
 		"owner": owner,
-		"inSession": inSession
+		"inSession": inSession,
+		"firstname": firstname,
+		"lastname": lastname
 	}
 	return render_template("pic.html", **options)

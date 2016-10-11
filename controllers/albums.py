@@ -7,6 +7,8 @@ albums = Blueprint('albums', __name__, template_folder='templates')
 
 @albums.route('/albums/edit', methods = ['GET', 'POST'])
 def albums_edit_route():
+	firstname = ""
+	lastname = ""
 	if request.method == 'GET':
 
 		user = session['username']
@@ -43,6 +45,12 @@ def albums_edit_route():
 			access = 'private'
 			cur.execute("INSERT INTO Album (title, username, access) VALUES (%s, %s, %s)", ([newAlbum], [user], access))
 
+
+	cur.execute('SELECT firstname, lastname FROM User WHERE username=%s', [session['username']])
+	name = cur.fetchall()
+	firstname = name[0]['firstname']
+	lastname = name[0]['lastname']
+
 	cur.execute("SELECT title, albumID FROM Album WHERE username = %s", [user])
 	albumTitles = cur.fetchall()
 
@@ -52,7 +60,9 @@ def albums_edit_route():
 		"albumTitles": albumTitles,
 		"user": user,
 		"inSession": True,
-		"owner": True
+		"owner": True,
+		"firstname": firstname,
+		"lastname": lastname
 	}
 	return render_template("albums.html", **options)
 
@@ -60,8 +70,18 @@ def albums_edit_route():
 @albums.route('/albums', methods = ['GET','POST'])
 def albums_route():
 
+	db = connect_to_database()
+	cur = db.cursor()
+	
+	firstname = ""
+	lastname = ""
 	owner = False
 	if 'username' in session:
+		cur.execute('SELECT firstname, lastname FROM User WHERE username=%s', [session['username']])
+		name = cur.fetchall()
+		firstname = name[0]['firstname']
+		lastname = name[0]['lastname']
+
 		if not request.args.get('username'):
 			user = session['username']
 			owner = True
@@ -70,10 +90,8 @@ def albums_route():
 		inSession = True
 	else:
 		user = request.args.get('username')
-		inSession = False
+		inSession = False\
 
-	db = connect_to_database()
-	cur = db.cursor()
 	cur.execute("SELECT title, albumID FROM Album WHERE username = %s", [user])
 	albumTitles = cur.fetchall()
 
@@ -83,6 +101,8 @@ def albums_route():
 		"albumTitles": albumTitles,
 		"user": user,
 		"inSession": inSession,
-		"owner" : owner
+		"owner" : owner,
+		"firstname": firstname,
+		"lastname": lastname
 	}
 	return render_template("albums.html", **options)

@@ -18,7 +18,8 @@ def allowed_file(filename):
 
 @album.route('/album/edit', methods=['GET', 'POST'])
 def album_edit_route():
-
+	firstname = ""
+	lastname = ""
 	db = connect_to_database()
 	cur = db.cursor()
 
@@ -84,7 +85,11 @@ def album_edit_route():
 	title = cur.fetchall()
 	cur.execute("SELECT Contain.picID, Photo.format FROM Contain JOIN Photo WHERE Contain.picid = Photo.picid AND Contain.albumID = %s", [albumid])
 	pics = cur.fetchall()
-	
+	cur.execute('SELECT firstname, lastname FROM User WHERE username=%s', [session['username']])
+	name = cur.fetchall()
+	firstname = name[0]['firstname']
+	lastname = name[0]['lastname']
+
 
 
 	options = {
@@ -93,13 +98,16 @@ def album_edit_route():
 		"albumid": albumid,
 		"title": title,
 		"access": access,
-		"inSession": True
+		"inSession": True,
+		"firstname": firstname,
+		"lastname": lastname
 	}
 	return render_template("album.html", **options)
 
 @album.route('/album', methods=['GET','POST'])
 def album_route():
-
+	firstname = ""
+	lastname = ""
 	albumid = request.args.get('albumid')
 
 	db = connect_to_database()
@@ -111,7 +119,7 @@ def album_route():
 	inSession = False
 	if title[0]['access'] == 'private':
 		if 'username' in session:
-			inSession = True
+
 			cur.execute("SELECT username FROM Album WHERE albumID=%s and username=%s", ([albumid], session['username']))
 			owner = cur.fetchall()
 			if len(owner) == 0:
@@ -125,6 +133,12 @@ def album_route():
 	owner = False
 	if 'username' in session:
 		inSession = True
+
+		cur.execute('SELECT firstname, lastname FROM User WHERE username=%s', [session['username']])
+		name = cur.fetchall()
+		firstname = name[0]['firstname']
+		lastname = name[0]['lastname']
+		 
 		cur.execute("SELECT username FROM Album WHERE albumID=%s and username=%s", ([albumid], session['username']))
 		owner = cur.fetchall()
 		if len(owner) != 0:
@@ -141,6 +155,8 @@ def album_route():
 		"albumid": albumid,
 		"title": title,
 		"inSession": inSession,
-		"owner": owner
+		"owner": owner,
+		"firstname": firstname,
+		"lastname": lastname
 	}
 	return render_template("album.html", **options)

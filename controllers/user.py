@@ -8,11 +8,17 @@ user = Blueprint('user', __name__, template_folder='templates')
 
 @user.route('/user/edit', methods=['GET', 'POST'])
 def user_edit_route():
-
+  firstname = ""
+  lastname = ""
   message = []
 
   db = connect_to_database()
   cur = db.cursor()
+
+  cur.execute('SELECT firstname, lastname FROM User WHERE username=%s', [session['username']])
+  name = cur.fetchall()
+  firstname = name[0]['firstname']
+  lastname = name[0]['lastname']
 
   if request.method == 'POST':
   	if request.form.get('firstname'):
@@ -65,7 +71,9 @@ def user_edit_route():
   options = { 
   		"edit": True,
   		"message": message,
-  		"inSession": True
+  		"inSession": True,
+  		"firstname": firstname,
+		"lastname": lastname
   }
 
   return render_template('user.html', **options)
