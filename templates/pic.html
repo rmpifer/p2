@@ -1,7 +1,28 @@
 {% extends "base.html" %}
 {% block content %}
+
+	{%if inSession%}
+			<h1>Logged in as</h1>
+		<a href={{url_for('main.test_route')}} id="nav_home">Nav Home</a><br>
+		<a href={{url_for('user.user_edit_route')}} id='nav_edit')>Edit Account</a><br>
+		<a href={{url_for('albums.albums_route')}} id="nav_albums">My Albums</a><br>
+		<a href={{url_for('log.logout_route')}} id="nav_logout">Logout</a>
+	{%endif%}
+
+	
     <h1>PIC</h1>
-    <img src="/static/images/images/{{picid}}.{{format}}" style="width:420px;height:420px;"><br/>
+    <img src="/static/images/images/{{picid}}.{{format['format']}}"><br/>
+
+    <p id="pic_{{picid}}_caption">{{format['caption']}}</p>
+    {%if owner%}
+    	Edit caption<br>
+   		<form action={{url_for('pic.pic_route', picid=picid)}} method='POST'>
+    		<input type="hidden" name="op" value="caption">
+    		<input type="hidden" name="picid" value="{{picid}}">
+    		<input type="text" name="caption" value="" id="pic_caption_input">
+    		<input type="submit" value="Submit" id="pic_caption_submit">
+    	</form>
+    {%endif%}
     {%if not isFirst%}
     	<a href={{url_for('pic.pic_route', picid=previd)}} id="prev_pic">Previous&nbsp;</a>
     {%endif%}

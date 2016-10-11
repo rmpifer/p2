@@ -1,10 +1,10 @@
 
-DROP TABLE if exists Contain, Photo, Album, User;
+DROP TABLE if exists AlbumAccess, Contain, Photo, Album, User;
 
 
 CREATE TABLE User (
 	username VARCHAR(20),
-	password VARCHAR(20),
+	password VARCHAR(256),
 	firstName VARCHAR(20),
 	lastName VARCHAR(20),
 	email VARCHAR(40),
@@ -17,6 +17,7 @@ CREATE TABLE Album (
 	created DATETIME DEFAULT CURRENT_TIMESTAMP(),
 	lastUpdate DATETIME DEFAULT CURRENT_TIMESTAMP(),
 	username VARCHAR(20),
+	access ENUM ('private', 'public'),
 	PRIMARY KEY (albumID),
 	FOREIGN KEY (username) REFERENCES User (username)
 );
@@ -38,3 +39,7 @@ CREATE TABLE Contain (
 	FOREIGN KEY (picID) REFERENCES Photo (picID)
 );
 
+CREATE TABLE AlbumAccess(
+	albumID INTEGER,
+	username VARCHAR(20)
+);

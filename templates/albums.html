@@ -1,23 +1,42 @@
 {% extends "base.html" %}
 {% block content %}
+
+	{%if inSession%}
+		<h1>Logged in as</h1>
+		<a href={{url_for('main.test_route')}} id="nav_home">Nav Home</a><br>
+		<a href={{url_for('user.user_edit_route')}} id='nav_edit')>Edit Account</a><br>
+		<a href={{url_for('albums.albums_route')}} id="nav_albums">My Albums</a><br>
+		<a href={{url_for('log.logout_route')}} id="nav_logout">Logout</a>
+	{%endif%}
+
+
+
+
     <h1>ALBUMS</h1>
+
     {% if not edit %}
+
 	    {%for album in albumTitles%}
 
 	    	<h3><a href={{url_for('album.album_route',albumid=album.albumID)}} id="album_{{album.albumID}}_link">{{album['title']}}</a></h3>
 	    {% endfor %}
-	    <h3><a href={{url_for('albums.albums_edit_route', username=user)}} id="user_albums_edit_{{user}}">Edit Album</a></h3>
+
+	    {%if owner%}
+	    	<h3><a href={{url_for('albums.albums_edit_route', username=user)}} id="user_albums_edit_{{user}}">Edit Albums</a></h3>
+	    {%endif%}
+
 	{%endif%}
+
     {% if edit %}
     	{%for album in albumTitles%}
 	        <table>
 	          <tr>
 			    <td><b>{{album['title']}}</b></td>
 			    <td>
-			    	<a href={{url_for('album.album_edit_route',albumid=album.albumID)}}>Edit</a>
+			    	<a href={{url_for('album.album_edit_route',albumid=album.albumID)}} id="album_edit_{{album.albumID}}_link">Edit</a>
 			    </td>
 			    <td>
-			    	<form action={{url_for('albums.albums_edit_route',username=user)}} method='POST' id="delete_album_{{album.albumID}}">
+			    	<form action={{url_for('albums.albums_edit_route')}} method='POST' id="delete_album_{{album.albumID}}">
 			    		<input type="hidden" name="op" value="delete">
 			    		<input type="hidden" name="albumid" value="{{album.albumID}}">
 			    		<input type="submit" value="Delete">
@@ -31,7 +50,7 @@
 		  <tr>
 		    <td><b>Add new album</b></td>
 		    <td>
-		    	<form action={{url_for('albums.albums_edit_route',username=user)}} method='POST'>
+		    	<form action={{url_for('albums.albums_edit_route')}} method='POST'>
 		    		<input type="hidden" name="op" value="add">
 		    		<input type="hidden" name="username" value="{{user}}" >
 		    		<input type="text" name="title" value="" id="album_add_name" >

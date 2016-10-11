@@ -6,13 +6,31 @@
 
     <title>Photo Album</title>
 
+    {%if inSession%}
+      <h1>Logged in as</h1>
+      <a href={{url_for('main.test_route')}} id="nav_home">Nav Home</a><br>
+      <a href={{url_for('user.user_edit_route')}} id='nav_edit')>Edit Account</a><br>
+      <a href={{url_for('albums.albums_route')}} id="nav_albums">My Albums</a><br>
+      <a href={{url_for('log.logout_route')}} id="nav_logout">Logout</a>
+    {%endif%}
+    
     <p class="left">
       	<h1>Welcome to our Photo Album!</h1>
 
+      {%if not inSession%}
+
+        <a href={{url_for('user.user_route')}} id="home_user_create">Create Account</a><br>
+        <a href= {{url_for('log.login_route')}} id="home_login">Log in</a><br>
+
+        {%for user in users%}
+          <a href={{url_for('albums.albums_route', username=user['username'])}}>{{user['username']}}</a><br>
+        {%endfor%}
+      {%endif%}
+
   		{% for result in results %}
-
-			<h3><a href={{url_for('albums.albums_route', username=result.username)}} id="user_albums_{{result.username}}">{{result.username}}</a></h3>
-
+      <body>
+			 <h3><a href={{url_for('album.album_route', albumid=result.albumID)}} id="album_{{result.albumID}}_link">{{result.albumID}}</a></h3>
+      </body>
   		{% endfor %}
 
       	<footer>Authored: Ryan Pifer, Semptember 2016</footer>

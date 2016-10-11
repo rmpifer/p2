@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block content %}
+
+	<meta name="author" content="Ryan Pifer">
+
+  {%if inSession%}
+    <h1>Logged in as</h1>
+    <a href={{url_for('main.test_route')}} id="nav_home">Nav Home</a><br>
+    <a href={{url_for('user.user_edit_route')}} id='nav_edit')>Edit Account</a><br>
+    <a href={{url_for('albums.albums_route')}} id="nav_albums">My Albums</a><br>
+    <a href={{url_for('log.logout_route')}} id="nav_logout">Logout</a>
+  {%endif%}
+
+  {%for error in message%}
+    <p class="error">
+      {{error}}
+    </p>
+  {%endfor%}
+
+  {%if not edit%}
+    <p class="center">
+      	<h1>Create an Account</h1><br>
+          <p>
+  		      <form action={{url_for('user.user_route')}} method='POST'>
+             <input type="text" name="username" value="Username" id="new_username_input"><br>
+              <input type="text" name="firstname" value="First Name" id="new_firstname_input"><br>
+              <input type="text" name="lastname" value="Last Name" id="new_lastname_input"><br>
+              <input type="text" name="password1" value="Password" id="new_password1_input"><br>
+              <input type="text" name="password2" value="Re-enter Password" id="new_password2_input"><br>
+              <input type="text" name="email" value="E-mail" id="new_email_input"><br>
+              <input type="submit" value="Submit" id="new_submit"><br>
+          </p>
+    {%endif%}
+
+    {% if edit %}
+      <h1>Edit Account Information</h1><br>
+        <p>
+          Change First Name
+          <form action={{url_for('user.user_edit_route')}} method='POST'>
+            <input type="text" name="firstname" value="" id="update_firstname_input">
+            <input type="submit" value="Submit" id="update_firstname_submit">
+          </form>
+
+          Change Last Name
+          <form action={{url_for('user.user_edit_route')}} method='POST'>
+            <input type="text" name="lastname" value="" id="update_lastname_input">
+            <input type="submit" value="Submit" id="update_lastname_submit">
+          </form>
+
+          Change Password
+          <form action={{url_for('user.user_edit_route')}} method='POST'>
+            <input type="text" name="password1" value="" id="update_password1_input"><br>
+            Re-type Password<br>
+            <input type="text" name="password2" value="" id="update_password2_input">
+            <input type="submit" value="Submit" id="update_password_submit">
+          </form>
+
+          Change E-mail
+          <form action={{url_for('user.user_edit_route')}} method='POST'>
+            <input type="text" name="email" value="" id="update_email_input">
+            <input type="submit" value="Submit" id="update_email_submit">
+          </form>
+    {%endif%}
+
+
+      	<footer>Authored: Ryan Pifer, Semptember 2016</footer>
+    </p>
+{% endblock %}

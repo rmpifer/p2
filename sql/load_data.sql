@@ -1,27 +1,27 @@
 
 #Set Users
 INSERT INTO User (username, firstName, lastName, email,  password)
-VALUES ('sportslover', 'Paul', 'Walker', 'sportslover@hotmail.com', 'paulpass93');
+VALUES ('sportslover', 'Paul', 'Walker', 'sportslover@hotmail.com', 'sha512$8ec61415f1eb4afba45fa95e164a73e5$a8156f5e122a936e55512ccad145e72581c20853d8ceee8fc4ab535bead173dfb6625dd1d0eaccc9ace73008c135ef5eecb0b452470d007fde088602659ad9a2');
 
 INSERT INTO User (username, firstName, lastName, email,  password)
-VALUES ('traveler', 'Rebecca', 'Travolta', 'rebt@explorer.org', 'rebeccapass15');
+VALUES ('traveler', 'Rebecca', 'Travolta', 'rebt@explorer.org', 'sha512$1c662feb81e84cd78cf8d6a96e912ebb$eed150f49e6669c4aee79b0f1ed238ec557e8a6dc1af8c8b4dd393a1a6f0926b97bb537fc7a7af95db36982eaa90a313d4968cdc03112321e9dbb3c4aba65337');
 
 INSERT INTO User (username, firstName, lastName, email,  password)
-VALUES ('spacejunkie', 'Bob', 'Spacey', 'bspace@spacejunkies.net', 'bob1pass');
+VALUES ('spacejunkie', 'Bob', 'Spacey', 'bspace@spacejunkies.net', 'sha512$523bbfca143d4676b5ecfc8ee42aca6d$fae41640d635cb42c3631e5a66a997e6f6ebfd25f6bb3f9777107d848c24bd2db9767242e803a881dbc5af73ddbf7ee80d1d855db2568061bfb2ca21fcf2dd5f');
 
 
 #Set Albums
-INSERT INTO Album (title, username)
-VALUES ('I love sports', 'sportslover');
+INSERT INTO Album (title, username, access)
+VALUES ('I love sports', 'sportslover', 'public');
 
-INSERT INTO Album (title, username)
-VALUES ('I love football', 'sportslover');
+INSERT INTO Album (title, username, access)
+VALUES ('I love football', 'sportslover', 'private');
 
-INSERT INTO Album (title, username)
-VALUES ('Around The World', 'traveler');
+INSERT INTO Album (title, username, access)
+VALUES ('Around The World', 'traveler', 'public');
 
-INSERT INTO Album (title, username)
-VALUES ('Cool Space Shots', 'spacejunkie');
+INSERT INTO Album (title, username, access)
+VALUES ('Cool Space Shots', 'spacejunkie', 'private');
 
 #Set/Contain Photos
 INSERT INTO Photo (picID, format) VALUES ('b94f256c23dec8a2c0da546849058d9e', 'jpg');

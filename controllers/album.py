@@ -9,7 +9,7 @@ album = Blueprint('album', __name__, template_folder='templates')
 
 
 UPLOAD_FOLDER = 'static/images/images'
-ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
+ALLOWED_EXTENSIONS = set(['png', 'jpg', 'bmp', 'gif'])
 
 
 def allowed_file(filename):
@@ -22,17 +22,12 @@ def album_edit_route():
 	db = connect_to_database()
 	cur = db.cursor()
 
-	albumid = request.args.get('albumid')
+	if request.method == 'GET':
+		albumid = request.args.get('albumid')
 
-	cur.execute("SELECT title FROM Album WHERE albumID = %s", [albumid])
-	title = cur.fetchall()
-	if not title:
-		response = jsonify({'message': "Bad albumid"})
-  		response.status_code = 404
-  		response.status = 'error.Bad Request'
-  		return response
 
 	if request.method == 'POST':
+		albumid = request.form.get('albumid')
 		if request.form.get('op') == 'add':
 			file = request.files['file']
 
@@ -57,10 +52,8 @@ def album_edit_route():
 				sequenceNum += 1
 				cur.execute("INSERT INTO Photo (picID, format) VALUES (%s, %s)", (picid, format ))
 				cur.execute("INSERT INTO Contain (sequenceNum, albumID, picID, caption) VALUES (%s, %s, %s, %s)", (sequenceNum, albumid, picid, ""))
-				cur.execute("UPDATE Album SET lastUpdate=CURRENT_TIMESTAMP() WHERE albumID=%s", albumid)
 
 		if request.form.get('op') == 'delete':
-			print "after delete"
 			picid = request.form.get('picid')
 			cur.execute("SELECT format FROM Photo WHERE picID=%s", [picid])
 			badPic = cur.fetchall()
@@ -69,9 +62,26 @@ def album_edit_route():
 			remove(path.join(getcwd(), location))
 			cur.execute("DELETE FROM Contain WHERE picID=%s", [picid])
 			cur.execute("DELETE FROM Photo WHERE picID = %s", [picid])
-			cur.execute("UPDATE Album SET lastUpdate=CURRENT_TIMESTAMP() WHERE albumID=%s", albumid)
-			
 
+		if request.form.get('op') == 'grant':
+			username = request.form.get('username')
+			cur.execute('INSERT INTO AlbumAccess(albumID, username) VALUES (%s, %s)', (albumid, username))
+
+		if request.form.get('op') == 'revoke':
+			username = request.form.get('username')
+			cur.execute('DELETE FROM AlbumAccess WHERE username=%s AND albumID=%s', (username, albumid))
+
+		if request.form.get('op') == 'access':
+			access = request.form.get('access')
+			cur.execute("UPDATE Album SET access=%s WHERE albumID=%s", (access, albumid))
+
+		cur.execute("UPDATE Album SET lastUpdate=CURRENT_TIMESTAMP() WHERE albumID=%s", albumid)
+	
+
+	cur.execute('SELECT username FROM AlbumAccess WHERE albumID=%s', albumid)
+	access = cur.fetchall()
+	cur.execute("SELECT title FROM Album WHERE albumID = %s", [albumid])
+	title = cur.fetchall()
 	cur.execute("SELECT Contain.picID, Photo.format FROM Contain JOIN Photo WHERE Contain.picid = Photo.picid AND Contain.albumID = %s", [albumid])
 	pics = cur.fetchall()
 	
@@ -81,7 +91,9 @@ def album_edit_route():
 		"edit": True,
 		"pics": pics,
 		"albumid": albumid,
-		"title": title
+		"title": title,
+		"access": access,
+		"inSession": True
 	}
 	return render_template("album.html", **options)
 
@@ -93,22 +105,42 @@ def album_route():
 	db = connect_to_database()
 	cur = db.cursor()
 
-	cur.execute("SELECT title FROM Album WHERE albumID = %s", [albumid])
+	cur.execute("SELECT title, access FROM Album WHERE albumID = %s", [albumid])
 	title = cur.fetchall()
 
-	if not title:
-		response = jsonify({'message': "Bad albumid"})
-  		response.status_code = 404
-  		response.status = 'error.Bad Request'
-  		return response
+	inSession = False
+	if title[0]['access'] == 'private':
+		if 'username' in session:
+			inSession = True
+			cur.execute("SELECT username FROM Album WHERE albumID=%s and username=%s", ([albumid], session['username']))
+			owner = cur.fetchall()
+			if len(owner) == 0:
+				cur.execute("SELECT username FROM AlbumAccess WHERE username=%s AND albumID=%s", (session['username'], albumid))
+				permission = cur.fetchall()
+				if len(permission) == 0:
+					abort(403)
+		else:
+			return redirect(url_for('log.login_route'))
 
-	cur.execute("SELECT Contain.picID, Photo.format FROM Contain JOIN Photo WHERE Contain.picid = Photo.picid AND Contain.albumID = %s", [albumid])
+	owner = False
+	if 'username' in session:
+		inSession = True
+		cur.execute("SELECT username FROM Album WHERE albumID=%s and username=%s", ([albumid], session['username']))
+		owner = cur.fetchall()
+		if len(owner) != 0:
+			owner = True
+			
+			
+
+	cur.execute("SELECT Contain.picID, Photo.format, Photo.posted, Contain.caption FROM Contain JOIN Photo WHERE Contain.picid = Photo.picid AND Contain.albumID = %s", [albumid])
 	pics = cur.fetchall()
 
 	options = {
 		"edit": False,
 		"pics": pics,
 		"albumid": albumid,
-		"title": title
+		"title": title,
+		"inSession": inSession,
+		"owner": owner
 	}
 	return render_template("album.html", **options)

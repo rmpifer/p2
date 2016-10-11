@@ -7,27 +7,58 @@ from os import *
 
 pic = Blueprint('pic', __name__, template_folder='templates')
 
-@pic.route('/pic')
+@pic.route('/pic', methods=['GET', 'POST'])
 def pic_route():
 
 
 	db = connect_to_database()
 	cur = db.cursor()
 
+	if request.method == 'GET':
+		picid = request.args.get('picid')
 
-	picid = request.args.get('picid')
+	if request.method == 'POST':
+		if request.form.get('op') == 'caption':
+			picid = request.form.get('picid')
+			caption = request.form.get('caption')
+			cur.execute('UPDATE Contain SET caption=%s WHERE picid=%s', (caption, picid))
+			cur.execute('SELECT albumID FROM Contain WHERE picID=%s', [picid])
+			albumid = cur.fetchall()
+			albumid = albumid[0]['albumID']
+			cur.execute('UPDATE Album SET lastUpdate=CURRENT_TIMESTAMP() WHERE albumID=%s', [albumid])
+
 
 
 	cur.execute("SELECT albumID FROM Contain WHERE picID = %s", [picid])
 	albumid = cur.fetchall()
-
-	if not albumid:
-		response = jsonify({'message': "Bad picid"})
-  		response.status_code = 404
-  		response.status = 'error.Bad Request'
-  		return response
-
 	albumid = albumid[0]['albumID']
+
+	cur.execute("SELECT access FROM Album WHERE albumID=%s", [albumid])
+	access = cur.fetchall()
+
+	inSession = False
+	if access[0]['access'] == 'private':
+		if 'username' in session:
+			inSession = True
+			cur.execute("SELECT username FROM Album WHERE albumID=%s and username=%s", ([albumid], session['username']))
+			owner = cur.fetchall()
+			if len(owner) == 0:
+				cur.execute("SELECT username FROM AlbumAccess WHERE username=%s AND albumID=%s", (session['username'], albumid))
+				permission = cur.fetchall()
+				if len(permission) == 0:
+					abort(403)
+		else:
+			return redirect(url_for('log.login_route'))
+
+	owner = False
+	if 'username' in session:
+		inSession = True
+		cur.execute("SELECT username FROM Album WHERE albumID=%s and username=%s", ([albumid], session['username']))
+		owner = cur.fetchall()
+		if len(owner) != 0:
+			owner = True
+
+
 	cur.execute("SELECT picID FROM Contain WHERE albumID = %s ORDER BY sequenceNum", [albumid])
 	picList = cur.fetchall()
 	counter = 0
@@ -51,9 +82,9 @@ def pic_route():
 		nextid = picList[nextid]['picID']
 
 
-	cur.execute("SELECT format FROM Photo WHERE picID=%s", [picid])
+	cur.execute("SELECT Photo.format, Contain.caption FROM Photo JOIN Contain WHERE Contain.picID=Photo.picID AND Contain.picID=%s", [picid])
 	format = cur.fetchall()
-	format = format[0]['format']
+	format = format[0]
 
 
 	options = {
@@ -63,6 +94,8 @@ def pic_route():
 		"previd": previd,
 		"nextid": nextid,
 		"isFirst": isFirst,
-		"isLast" : isLast
+		"isLast" : isLast,
+		"owner": owner,
+		"inSession": inSession
 	}
 	return render_template("pic.html", **options)
