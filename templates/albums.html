@@ -22,7 +22,7 @@
 	    {% endfor %}
 
 	    {%if owner%}
-	    	<h3><a href={{url_for('albums.albums_edit_route', username=user)}} id="user_albums_edit_{{user}}">Edit Albums</a></h3>
+	    	<h3><a href={{url_for('albums.albums_edit_route')}} id="user_albums_edit_{{user}}">Edit Albums</a></h3>
 	    {%endif%}
 
 	{%endif%}

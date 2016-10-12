@@ -10,11 +10,11 @@ def albums_edit_route():
 	firstname = ""
 	lastname = ""
 	db = connect_to_database()
-  	cur = db.cursor()
+	cur = db.cursor()
 
 	user = session['username']
 
-  	if request.method == 'POST':
+	if request.method == 'POST':
 
 		if request.form.get('op') == 'delete':
 			albumID = request.form.get('albumid')
@@ -72,24 +72,23 @@ def albums_route():
 	firstname = ""
 	lastname = ""
 	owner = False
-	if 'username' in session:
+	if request.args.get('username'):
+		inSession = False
+		if 'username' in session:
+			inSession = True
+		user = request.args.get('username')
+		cur.execute("SELECT title, albumID FROM Album WHERE username = %s AND access=%s", ([user], 'public'))
+		albumTitles = cur.fetchall()
+	else:
 		cur.execute('SELECT firstname, lastname FROM User WHERE username=%s', [session['username']])
 		name = cur.fetchall()
 		firstname = name[0]['firstname']
 		lastname = name[0]['lastname']
-
-		if not request.args.get('username'):
-			user = session['username']
-			owner = True
-		else:
-			user = request.args.get('username')
+		user = session['username']
+		owner = True
 		inSession = True
-	else:
-		user = request.args.get('username')
-		inSession = False\
-
-	cur.execute("SELECT title, albumID FROM Album WHERE username = %s", [user])
-	albumTitles = cur.fetchall()
+		cur.execute("SELECT title, albumID FROM Album WHERE username = %s", [user])
+		albumTitles = cur.fetchall()
 
 
 	options = {

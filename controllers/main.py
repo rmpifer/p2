@@ -30,11 +30,11 @@ def test_route():
 	cur.execute('SELECT DISTINCT username FROM Album WHERE access=%s', ['public'])
 	users = cur.fetchall()
 	options = { 
-  		"results": results,
-  		"inSession": inSession,
-  		"users": users,
-  		"firstname": firstname,
-  		"lastname": lastname
+		"results": results,
+		"inSession": inSession,
+		"users": users,
+		"firstname": firstname,
+		"lastname": lastname
  	}
 
 	return render_template('index.html', **options)
