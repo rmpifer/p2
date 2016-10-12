@@ -53,6 +53,7 @@ def album_edit_route():
 				sequenceNum += 1
 				cur.execute("INSERT INTO Photo (picID, format) VALUES (%s, %s)", (picid, format ))
 				cur.execute("INSERT INTO Contain (sequenceNum, albumID, picID, caption) VALUES (%s, %s, %s, %s)", (sequenceNum, albumid, picid, ""))
+				cur.execute("UPDATE Album SET lastUpdate=CURRENT_TIMESTAMP() WHERE albumID=%s", albumid)
 
 		if request.form.get('op') == 'delete':
 			picid = request.form.get('picid')
@@ -63,6 +64,7 @@ def album_edit_route():
 			remove(path.join(getcwd(), location))
 			cur.execute("DELETE FROM Contain WHERE picID=%s", [picid])
 			cur.execute("DELETE FROM Photo WHERE picID = %s", [picid])
+			cur.execute("UPDATE Album SET lastUpdate=CURRENT_TIMESTAMP() WHERE albumID=%s", albumid)
 
 		if request.form.get('op') == 'grant':
 			username = request.form.get('username')
@@ -75,12 +77,14 @@ def album_edit_route():
 		if request.form.get('op') == 'access':
 			access = request.form.get('access')
 			cur.execute("UPDATE Album SET access=%s WHERE albumID=%s", (access, albumid))
+			cur.execute("UPDATE Album SET lastUpdate=CURRENT_TIMESTAMP() WHERE albumID=%s", [albumid])
 			if access == 'public':
 				cur.execute("DELETE FROM AlbumAccess WHERE albumID=%s", [albumid])
 
-		cur.execute("UPDATE Album SET lastUpdate=CURRENT_TIMESTAMP() WHERE albumID=%s", albumid)
-	
 
+	
+	cur.execute('SELECT access FROM Album WHERE albumID=%s AND access=%s', (albumid, 'private'))
+	private = cur.fetchall()
 	cur.execute('SELECT username FROM AlbumAccess WHERE albumID=%s', [albumid])
 	access = cur.fetchall()
 	cur.execute("SELECT title FROM Album WHERE albumID = %s", [albumid])
@@ -102,7 +106,8 @@ def album_edit_route():
 		"access": access,
 		"inSession": True,
 		"firstname": firstname,
-		"lastname": lastname
+		"lastname": lastname,
+		"private": private
 	}
 	return render_template("album.html", **options)
 

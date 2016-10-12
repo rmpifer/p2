@@ -39,6 +39,7 @@
     		<input type="submit" value="Submit" id="album_edit_access_submit">
     	</form>
 
+    	{%if private%}
     	<table>
     		<tr><th>Username</th><th>Update Access</th></tr>
     		{%for user in access%}
@@ -59,6 +60,8 @@
 				</form></td>
     		</td>
     	</table>
+    	{%endif%}
+
     	{%for pic in pics%}
     		<table>
 	          <tr>

@@ -9,16 +9,12 @@ albums = Blueprint('albums', __name__, template_folder='templates')
 def albums_edit_route():
 	firstname = ""
 	lastname = ""
-	if request.method == 'GET':
+	db = connect_to_database()
+  	cur = db.cursor()
 
-		user = session['username']
-		db = connect_to_database()
-  		cur = db.cursor()
+	user = session['username']
 
   	if request.method == 'POST':
-		user = session['username']
-		db = connect_to_database()
-		cur = db.cursor()
 
 		if request.form.get('op') == 'delete':
 			albumID = request.form.get('albumid')
@@ -72,7 +68,7 @@ def albums_route():
 
 	db = connect_to_database()
 	cur = db.cursor()
-	
+
 	firstname = ""
 	lastname = ""
 	owner = False
