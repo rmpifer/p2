@@ -75,14 +75,20 @@ def album_edit_route():
 		if request.form.get('op') == 'access':
 			access = request.form.get('access')
 			cur.execute("UPDATE Album SET access=%s WHERE albumID=%s", (access, albumid))
+			if access == 'public':
+				cur.execute("DELETE FROM AlbumAccess WHERE albumID=%s", [albumid])
 
 		cur.execute("UPDATE Album SET lastUpdate=CURRENT_TIMESTAMP() WHERE albumID=%s", albumid)
 	
 
-	cur.execute('SELECT username FROM AlbumAccess WHERE albumID=%s', albumid)
+	cur.execute('SELECT username FROM AlbumAccess WHERE albumID=%s', [albumid])
 	access = cur.fetchall()
-	cur.execute("SELECT title FROM Album WHERE albumID = %s", [albumid])
+	cur.execute("SELECT title, access FROM Album WHERE albumID = %s", [albumid])
 	title = cur.fetchall()
+	private = False
+	print title
+	if title[0]['access'] == 'private':
+		private = True
 	cur.execute("SELECT Contain.picID, Photo.format FROM Contain JOIN Photo WHERE Contain.picid = Photo.picid AND Contain.albumID = %s", [albumid])
 	pics = cur.fetchall()
 	cur.execute('SELECT firstname, lastname FROM User WHERE username=%s', [session['username']])
@@ -100,7 +106,8 @@ def album_edit_route():
 		"access": access,
 		"inSession": True,
 		"firstname": firstname,
-		"lastname": lastname
+		"lastname": lastname,
+		"private": private
 	}
 	return render_template("album.html", **options)
 
@@ -138,7 +145,7 @@ def album_route():
 		name = cur.fetchall()
 		firstname = name[0]['firstname']
 		lastname = name[0]['lastname']
-		 
+
 		cur.execute("SELECT username FROM Album WHERE albumID=%s and username=%s", ([albumid], session['username']))
 		owner = cur.fetchall()
 		if len(owner) != 0:

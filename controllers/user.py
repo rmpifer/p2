@@ -52,7 +52,7 @@ def user_edit_route():
  		password2 = request.form.get('password2')
  		if len(password1) < 8:
 			message.append("Passwords must be at least 8 characters long")
-		if not re.match("^[0-9]*$", password1) or not re.match("^[a-zA-Z]*$", password1):
+		if not re.match("^(?=.*[a-zA-z])(?=.*\d)[A-Za-z\d]*$", password1):
 			message.append("Passwords must contain at least one letter and one number")
    		if not re.match("^[\w\d_]*$", password1):
 			message.append("Passwords may only contain letters, digits, and underscores")
@@ -63,7 +63,7 @@ def user_edit_route():
 			algorithm = 'sha512'
 			salt = uuid.uuid4().hex
 			m = hashlib.new(algorithm)
-			m.update(salt + password)
+			m.update(salt + password1)
 			password_hash = m.hexdigest()
 	 		password = '$'.join([algorithm, salt, password_hash])
 	 		cur.execute('UPDATE User SET password=%s WHERE username=%s', (password, session['username']))
@@ -88,7 +88,7 @@ def user_route():
 
 	if request.method == 'GET':
 		if 'username' in session:
-			redirect(url_for('user.user_edit_route'))
+			return redirect(url_for('user.user_edit_route'))
 
 
 	if request.method == 'POST':
@@ -124,7 +124,7 @@ def user_route():
 			message.append("Password may not be left blank")
 		if len(password1) < 8:
 			message.append("Passwords must be at least 8 characters long")
-		if not re.match("^[a-zA-Z0-9]*$", password1):
+		if not re.match("^(?=.*[a-zA-z])(?=.*\d)[A-Za-z\d]*$", password1):
 			message.append("Passwords must contain at least one letter and one number")
    		if not re.match("^[\w\d_]*$", password1):
 			message.append("Passwords may only contain letters, digits, and underscores")

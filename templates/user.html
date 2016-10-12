@@ -22,12 +22,18 @@
       	<h1>Create an Account</h1><br>
           <p>
   		      <form action={{url_for('user.user_route')}} method='POST'>
-             <input type="text" name="username" value="Username" id="new_username_input"><br>
-              <input type="text" name="firstname" value="First Name" id="new_firstname_input"><br>
-              <input type="text" name="lastname" value="Last Name" id="new_lastname_input"><br>
-              <input type="text" name="password1" value="Password" id="new_password1_input"><br>
-              <input type="text" name="password2" value="Re-enter Password" id="new_password2_input"><br>
-              <input type="text" name="email" value="E-mail" id="new_email_input"><br>
+              Username:<br>
+             <input type="text" name="username" value="" id="new_username_input"><br>
+             First Name:<br>
+              <input type="text" name="firstname" value="" id="new_firstname_input"><br>
+              Last Name:<br>
+              <input type="text" name="lastname" value="" id="new_lastname_input"><br>
+              Password:<br>
+              <input type="text" name="password1" value="" id="new_password1_input"><br>
+              Re-enter Password:<br>
+              <input type="text" name="password2" value="" id="new_password2_input"><br>
+              Email:<br>
+              <input type="text" name="email" value="" id="new_email_input"><br>
               <input type="submit" value="Submit" id="new_submit"><br>
           </p>
     {%endif%}
