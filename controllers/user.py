@@ -52,7 +52,7 @@ def user_edit_route():
  		password2 = request.form.get('password2')
  		if len(password1) < 8:
 			message.append("Passwords must be at least 8 characters long")
-		if not re.match("^(?=.*[a-zA-z])(?=.*\d)[A-Za-z\d]*$", password1):
+		if not re.match("^(?=.*[a-zA-z])(?=.*\d)", password1):
 			message.append("Passwords must contain at least one letter and one number")
    		if not re.match("^[\w\d_]*$", password1):
 			message.append("Passwords may only contain letters, digits, and underscores")
@@ -124,7 +124,7 @@ def user_route():
 			message.append("Password may not be left blank")
 		if len(password1) < 8:
 			message.append("Passwords must be at least 8 characters long")
-		if not re.match("^(?=.*[a-zA-z])(?=.*\d)[A-Za-z\d]*$", password1):
+		if not re.match("^(?=.*[a-zA-z])(?=.*\d)", password1):
 			message.append("Passwords must contain at least one letter and one number")
    		if not re.match("^[\w\d_]*$", password1):
 			message.append("Passwords may only contain letters, digits, and underscores")
