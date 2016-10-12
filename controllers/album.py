@@ -83,12 +83,8 @@ def album_edit_route():
 
 	cur.execute('SELECT username FROM AlbumAccess WHERE albumID=%s', [albumid])
 	access = cur.fetchall()
-	cur.execute("SELECT title, access FROM Album WHERE albumID = %s", [albumid])
+	cur.execute("SELECT title FROM Album WHERE albumID = %s", [albumid])
 	title = cur.fetchall()
-	private = False
-	print title
-	if title[0]['access'] == 'private':
-		private = True
 	cur.execute("SELECT Contain.picID, Photo.format FROM Contain JOIN Photo WHERE Contain.picid = Photo.picid AND Contain.albumID = %s", [albumid])
 	pics = cur.fetchall()
 	cur.execute('SELECT firstname, lastname FROM User WHERE username=%s', [session['username']])
@@ -106,8 +102,7 @@ def album_edit_route():
 		"access": access,
 		"inSession": True,
 		"firstname": firstname,
-		"lastname": lastname,
-		"private": private
+		"lastname": lastname
 	}
 	return render_template("album.html", **options)
 
