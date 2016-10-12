@@ -53,7 +53,8 @@ def login_route():
 
 	return render_template("log.html", **options)
 
-@log.route('/logout')
+@log.route('/logout', methods=['GET', 'POST'])
 def logout_route():
-	session.pop('username', None)
-	return redirect(url_for('main.test_route'))
+	if request.method == 'POST':
+		session.pop('username', None)
+		return redirect(url_for('main.test_route'))

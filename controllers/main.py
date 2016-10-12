@@ -3,11 +3,12 @@ from extensions import *
 
 main = Blueprint('main', __name__, template_folder='templates')
 
-@main.route('/')
+@main.route('/', methods=['GET', 'POST'])
 def test_route():
 	
 	db = connect_to_database()
 	cur = db.cursor()
+
 
 	firstname = ""
 	lastname = ""

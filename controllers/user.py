@@ -50,6 +50,7 @@ def user_edit_route():
 		if request.form.get('password1'):
 			password1 = request.form.get('password1')
 			password2 = request.form.get('password2')
+			
 			if len(password1) < 8:
 				message.append("Passwords must be at least 8 characters long")
 			if not re.match("^(?=.*[a-zA-z])(?=.*\d)", password1):

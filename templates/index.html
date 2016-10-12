@@ -11,7 +11,9 @@
       <a href={{url_for('main.test_route')}} id="nav_home">Nav Home</a><br>
       <a href={{url_for('user.user_edit_route')}} id='nav_edit')>Edit Account</a><br>
       <a href={{url_for('albums.albums_route')}} id="nav_albums">My Albums</a><br>
-      <a href={{url_for('log.logout_route')}} id="nav_logout">Logout</a>
+      <form action={{url_for('log.logout_route')}} method='POST' id="nav_logout">
+        <input type="submit" value="Logout" id="nav_logout">
+      </form>
     {%endif%}
 
     <p class="left">
