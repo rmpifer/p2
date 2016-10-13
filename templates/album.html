@@ -14,7 +14,6 @@
 
 	{%for x in title%}
 		<h1>{{x['title']}}</h1>
-		Owned by: {{owner}}<br><br>
 	{%endfor%}
 
 	{% if not edit %}
@@ -24,6 +23,10 @@
 	    	{{pic['posted']}}<br>
 	    	{{pic['caption']}}<br><br>
 	    {% endfor %}
+
+	    {% if owner %}
+			<a href={{url_for('album.album_edit_route',albumid=albumid)}}>Edit Album</a>
+		{%endif%}
 
 	{% endif %}
 

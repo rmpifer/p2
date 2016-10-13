@@ -11,11 +11,13 @@ def albums_edit_route():
 	lastname = ""
 	db = connect_to_database()
 	cur = db.cursor()
-
-	if not 'username' in session:
-		abort(403)
 		
+	if not 'username' in session:
+		return redirect(url_for('log.login_route'))
+
+	#check for username args
 	user = session['username']
+
 
 	if request.method == 'POST':
 
@@ -35,7 +37,7 @@ def albums_edit_route():
   				cur.execute("DELETE FROM Photo WHERE picID = %s", [picid])
 		
 			cur.execute("DELETE FROM Album WHERE albumID=%s", [albumID])
-			cur.execute("DELETE FROM AlbumAccess WHERE albumID=%s", albumID)
+			cur.execute("DELETE FROM AlbumAccess WHERE albumID=%s", [albumID])
 
 		
 		if request.form.get('op') == 'add':
@@ -45,7 +47,7 @@ def albums_edit_route():
 			cur.execute("INSERT INTO Album (title, username, access) VALUES (%s, %s, %s)", ([newAlbum], [user], access))
 
 
-	cur.execute('SELECT firstname, lastname FROM User WHERE username=%s', [session['username']])
+	cur.execute('SELECT firstname, lastname FROM User WHERE username=%s', [user])
 	name = cur.fetchall()
 	firstname = name[0]['firstname']
 	lastname = name[0]['lastname']

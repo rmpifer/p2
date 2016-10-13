@@ -22,16 +22,27 @@ def album_edit_route():
 	lastname = ""
 	db = connect_to_database()
 	cur = db.cursor()
-	if not 'username' in session:
-		abort(403)
 
-	private = False
 	if request.method == 'GET':
 		albumid = request.args.get('albumid')
 
+		if 'username' in session:
+			cur.execute("SELECT * FROM Album WHERE albumID=%s AND username=%s", (albumid, session['username']))
+			if not cur.fetchall():
+				abort(403)
+		else:
+			return redirect(url_for('log.login_route'))
 
 	if request.method == 'POST':
 		albumid = request.form.get('albumid')
+
+		if 'username' in session:
+			cur.execute("SELECT * FROM Album WHERE albumID=%s AND username=%s", (albumid, session['username']))
+			if not cur.fetchall():
+				abort(403)
+		else:
+			return redirect(url_for('log.login_route'))
+
 		if request.form.get('op') == 'add':
 			file = request.files['file']
 
@@ -83,10 +94,11 @@ def album_edit_route():
 			cur.execute("UPDATE Album SET lastUpdate=CURRENT_TIMESTAMP() WHERE albumID=%s", [albumid])
 			if access == 'public':
 				cur.execute("DELETE FROM AlbumAccess WHERE albumID=%s", [albumid])
-			if access == 'private':
-				private = True
+
 
 	
+	cur.execute('SELECT access FROM Album WHERE albumID=%s AND access=%s', (albumid, 'private'))
+	private = cur.fetchall()
 	cur.execute('SELECT username FROM AlbumAccess WHERE albumID=%s', [albumid])
 	access = cur.fetchall()
 	cur.execute("SELECT title FROM Album WHERE albumID = %s", [albumid])
@@ -97,11 +109,8 @@ def album_edit_route():
 	name = cur.fetchall()
 	firstname = name[0]['firstname']
 	lastname = name[0]['lastname']
-	cur.execute("SELECT username FROM Album WHERE albumID=%s", [albumid])
-	owner = cur.fetchall()
-	cur.execute("SELECT firstname, lastname FROM User WHERE username=%s", [owner[0]['username']])	
-	owner = cur.fetchall()
-	owner = owner[0]['firstname'] + " " + owner[0]['lastname']
+
+
 
 	options = {
 		"edit": True,
@@ -112,8 +121,7 @@ def album_edit_route():
 		"inSession": True,
 		"firstname": firstname,
 		"lastname": lastname,
-		"private": private,
-		"owner": owner
+		"private": private
 	}
 	return render_template("album.html", **options)
 
@@ -133,16 +141,17 @@ def album_route():
 	if title[0]['access'] == 'private':
 		if 'username' in session:
 
-			cur.execute("SELECT username FROM Album WHERE albumID=%s and username=%s", ([albumid], session['username']))
+			cur.execute("SELECT * FROM Album WHERE albumID=%s and username=%s", ([albumid], session['username']))
 			owner = cur.fetchall()
 			if len(owner) == 0:
-				cur.execute("SELECT username FROM AlbumAccess WHERE username=%s AND albumID=%s", (session['username'], albumid))
+				cur.execute("SELECT * FROM AlbumAccess WHERE username=%s AND albumID=%s", (session['username'], albumid))
 				permission = cur.fetchall()
 				if len(permission) == 0:
 					abort(403)
 		else:
 			return redirect(url_for('log.login_route'))
 
+	owner = False
 	if 'username' in session:
 		inSession = True
 
@@ -150,13 +159,8 @@ def album_route():
 		name = cur.fetchall()
 		firstname = name[0]['firstname']
 		lastname = name[0]['lastname']
+
 			
-			
-	cur.execute("SELECT username FROM Album WHERE albumID=%s", [albumid])
-	owner = cur.fetchall()
-	cur.execute("SELECT firstname, lastname FROM User WHERE username=%s", [owner[0]['username']])	
-	owner = cur.fetchall()
-	owner = owner[0]['firstname'] + " " + owner[0]['lastname']
 
 	cur.execute("SELECT Contain.picID, Photo.format, Photo.posted, Contain.caption FROM Contain JOIN Photo WHERE Contain.picid = Photo.picid AND Contain.albumID = %s", [albumid])
 	pics = cur.fetchall()
@@ -167,8 +171,8 @@ def album_route():
 		"albumid": albumid,
 		"title": title,
 		"inSession": inSession,
+		"owner": owner,
 		"firstname": firstname,
-		"lastname": lastname,
-		"owner": owner
+		"lastname": lastname
 	}
 	return render_template("album.html", **options)
