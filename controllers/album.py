@@ -146,7 +146,7 @@ def album_route():
 	cur.execute("SELECT title, access FROM Album WHERE albumID = %s", [albumid])
 	title = cur.fetchall()
 	if not title:
-		return render_template('403.html'), 403
+		return render_template('404.html'), 404
 
 	inSession = False
 	if title[0]['access'] == 'private':

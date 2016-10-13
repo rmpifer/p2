@@ -84,8 +84,6 @@ def albums_route():
 		user = request.args.get('username')
 		cur.execute("SELECT title, albumID FROM Album WHERE username = %s AND access=%s", ([user], 'public'))
 		albumTitles = cur.fetchall()
-		if not albumTitles:
-			return render_template('404.html'), 404
 	else:
 		cur.execute('SELECT firstname, lastname FROM User WHERE username=%s', [session['username']])
 		name = cur.fetchall()
