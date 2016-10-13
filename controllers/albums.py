@@ -12,6 +12,9 @@ def albums_edit_route():
 	db = connect_to_database()
 	cur = db.cursor()
 
+	if not 'username' in session:
+		abort(403)
+		
 	user = session['username']
 
 	if request.method == 'POST':
