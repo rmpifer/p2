@@ -47,7 +47,7 @@ def pic_route():
 				cur.execute("SELECT username FROM AlbumAccess WHERE username=%s AND albumID=%s", (session['username'], albumid))
 				permission = cur.fetchall()
 				if len(permission) == 0:
-					abort(403)
+					return render_template('403.html'), 403
 		else:
 			return redirect(url_for('log.login_route'))
 

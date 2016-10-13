@@ -18,6 +18,7 @@ def allowed_file(filename):
 
 @album.route('/album/edit', methods=['GET', 'POST'])
 def album_edit_route():
+
 	firstname = ""
 	lastname = ""
 	db = connect_to_database()
@@ -29,7 +30,7 @@ def album_edit_route():
 		if 'username' in session:
 			cur.execute("SELECT * FROM Album WHERE albumID=%s AND username=%s", (albumid, session['username']))
 			if not cur.fetchall():
-				abort(403)
+				return render_template('403.html'), 403
 		else:
 			return redirect(url_for('log.login_route'))
 
@@ -39,7 +40,7 @@ def album_edit_route():
 		if 'username' in session:
 			cur.execute("SELECT * FROM Album WHERE albumID=%s AND username=%s", (albumid, session['username']))
 			if not cur.fetchall():
-				abort(403)
+				return render_template('403.html'), 403
 		else:
 			return redirect(url_for('log.login_route'))
 
@@ -147,7 +148,7 @@ def album_route():
 				cur.execute("SELECT * FROM AlbumAccess WHERE username=%s AND albumID=%s", (session['username'], albumid))
 				permission = cur.fetchall()
 				if len(permission) == 0:
-					abort(403)
+					return render_template('403.html'), 403
 		else:
 			return redirect(url_for('log.login_route'))
 
