@@ -15,11 +15,6 @@ def user_edit_route():
 	db = connect_to_database()
 	cur = db.cursor()
 
-	cur.execute('SELECT firstname, lastname FROM User WHERE username=%s', [session['username']])
-	name = cur.fetchall()
-	firstname = name[0]['firstname']
-	lastname = name[0]['lastname']
-
 	if request.method == 'POST':
 		if request.form.get('firstname'):
 			firstname = request.form.get('firstname')
@@ -69,6 +64,12 @@ def user_edit_route():
 		 		password = '$'.join([algorithm, salt, password_hash])
 		 		cur.execute('UPDATE User SET password=%s WHERE username=%s', (password, session['username']))
 
+
+	cur.execute('SELECT firstname, lastname FROM User WHERE username=%s', [session['username']])
+	name = cur.fetchall()
+	firstname = name[0]['firstname']
+	lastname = name[0]['lastname']
+	
 	options = { 
 		"edit": True,
 		"message": message,

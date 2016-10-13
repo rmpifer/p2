@@ -27,6 +27,11 @@ def album_edit_route():
 	if request.method == 'GET':
 		albumid = request.args.get('albumid')
 
+		cur.execute("SELECT title FROM Album WHERE albumID = %s", [albumid])
+		title = cur.fetchall()
+		if not title:
+			return render_template('404.html'), 404
+
 		if 'username' in session:
 			cur.execute("SELECT * FROM Album WHERE albumID=%s AND username=%s", (albumid, session['username']))
 			if not cur.fetchall():
@@ -36,6 +41,11 @@ def album_edit_route():
 
 	if request.method == 'POST':
 		albumid = request.form.get('albumid')
+
+		cur.execute("SELECT title FROM Album WHERE albumID = %s", [albumid])
+		title = cur.fetchall()
+		if not title:
+			return render_template('404.html'), 404
 
 		if 'username' in session:
 			cur.execute("SELECT * FROM Album WHERE albumID=%s AND username=%s", (albumid, session['username']))
@@ -102,8 +112,6 @@ def album_edit_route():
 	private = cur.fetchall()
 	cur.execute('SELECT username FROM AlbumAccess WHERE albumID=%s', [albumid])
 	access = cur.fetchall()
-	cur.execute("SELECT title FROM Album WHERE albumID = %s", [albumid])
-	title = cur.fetchall()
 	cur.execute("SELECT Contain.picID, Photo.format FROM Contain JOIN Photo WHERE Contain.picid = Photo.picid AND Contain.albumID = %s", [albumid])
 	pics = cur.fetchall()
 	cur.execute('SELECT firstname, lastname FROM User WHERE username=%s', [session['username']])
@@ -137,6 +145,8 @@ def album_route():
 
 	cur.execute("SELECT title, access FROM Album WHERE albumID = %s", [albumid])
 	title = cur.fetchall()
+	if not title:
+		return render_template('403.html'), 403
 
 	inSession = False
 	if title[0]['access'] == 'private':
