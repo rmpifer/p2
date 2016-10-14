@@ -29,9 +29,9 @@
         {%endfor%}
       {%endif%}
 
-  		{% for result in results %}
+  		{% for album in albums %}
       <body>
-			 <h3><a href={{url_for('album.album_route', albumid=result.albumID)}} id="album_{{result.albumID}}_link">{{result.albumID}}</a></h3>
+			 <h3><a href={{url_for('album.album_route', albumid=album.albumID)}} id="album_{{album.albumID}}_link">{{album}}</a></h3>
       </body>
   		{% endfor %}
 
