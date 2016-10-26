@@ -34,7 +34,7 @@ def test_route():
 		cur.execute('SELECT title, albumID FROM Album WHERE albumID=%s', [result['albumID']])
 		albumTitle = cur.fetchall()
 		albumTitle = albumTitle[0]['title']
-		albums.append(albumTitle)
+		albums.append({"title": albumTitle, "albumid": result['albumID']})
 
 	cur.execute('SELECT DISTINCT username FROM Album WHERE access=%s', ['public'])
 	users = cur.fetchall()

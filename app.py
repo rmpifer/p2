@@ -13,6 +13,7 @@ app.register_blueprint(controllers.pic, url_prefix=config.env['prefix'])
 app.register_blueprint(controllers.main, url_prefix=config.env['prefix'])
 app.register_blueprint(controllers.user, url_prefix=config.env['prefix'])
 app.register_blueprint(controllers.log, url_prefix=config.env['prefix'])
+app.register_blueprint(controllers.api, url_prefix=config.env['prefix'])
 app.secret_key = ']\xda+sOnP\x13:K\x17\\M\x0c\xb8\xbdg\x15\xb4rVE\xeb\xf7'
 # Listen on external IPs
 # For us, listen to port 3000 so you can just run 'python app.py' to start the server

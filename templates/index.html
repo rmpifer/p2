@@ -6,20 +6,11 @@
 
     <title>Photo Album</title>
 
-    {%if inSession%}
-      <h1>Logged in as {{firstname}} {{lastname}}</h1>
-      <a href={{url_for('main.test_route')}} id="nav_home">Nav Home</a><br>
-      <a href={{url_for('user.user_edit_route')}} id='nav_edit')>Edit Account</a><br>
-      <a href={{url_for('albums.albums_route')}} id="nav_albums">My Albums</a><br>
-      <form action={{url_for('log.logout_route')}} method='POST' id="nav_logout">
-        <input type="submit" value="Logout" id="nav_logout">
-      </form>
-    {%endif%}
 
     <p class="left">
       	<h1>Welcome to our Photo Album!</h1>
 
-      {%if not inSession%}
+      {%if not session.logged_in%}
 
         <a href={{url_for('user.user_route')}} id="home_user_create">Create Account</a><br>
         <a href= {{url_for('log.login_route')}} id="home_login">Log in</a><br>
@@ -31,7 +22,7 @@
 
   		{% for album in albums %}
       <body>
-			 <h3><a href={{url_for('album.album_route', albumid=album.albumID)}} id="album_{{album.albumID}}_link">{{album}}</a></h3>
+			 <h3><a href={{url_for('album.album_route', albumid=album['albumid'])}} id="album_{{album['albumid']}}_link">{{album['title']}}</a></h3>
       </body>
   		{% endfor %}
 

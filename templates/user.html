@@ -3,12 +3,12 @@
 
 	<meta name="author" content="Ryan Pifer">
 
-  {%if inSession%}
+  {%if session.logged_in %}
     <h1>Logged in as {{firstname}} {{lastname}}</h1>
     <a href={{url_for('main.test_route')}} id="nav_home">Nav Home</a><br>
     <a href={{url_for('user.user_edit_route')}} id='nav_edit')>Edit Account</a><br>
     <a href={{url_for('albums.albums_route')}} id="nav_albums">My Albums</a><br>
-      <form action={{url_for('log.logout_route')}} method='POST' id="nav_logout">
+      <form id="nav_logout">
         <input type="submit" value="Logout" id="nav_logout">
       </form>
   {%endif%}
@@ -19,11 +19,11 @@
     </p>
   {%endfor%}
 
-  {%if not edit%}
+  {%if not session.logged_in %}
     <p class="center">
       	<h1>Create an Account</h1><br>
           <p>
-  		      <form action={{url_for('user.user_route')}} method='POST'>
+  		      <form id="createUser">
               Username:<br>
              <input type="text" name="username" value="" id="new_username_input"><br>
              First Name:<br>
@@ -37,36 +37,25 @@
               Email:<br>
               <input type="text" name="email" value="" id="new_email_input"><br>
               <input type="submit" value="Submit" id="new_submit"><br>
+            </form>
           </p>
     {%endif%}
 
-    {% if edit %}
+    {% if session.logged_in %}
       <h1>Edit Account Information</h1><br>
         <p>
           Change First Name
-          <form action={{url_for('user.user_edit_route')}} method='POST'>
+          <form id="updateUser">
             <input type="text" name="firstname" value="" id="update_firstname_input">
-            <input type="submit" value="Submit" id="update_firstname_submit">
-          </form>
-
           Change Last Name
-          <form action={{url_for('user.user_edit_route')}} method='POST'>
             <input type="text" name="lastname" value="" id="update_lastname_input">
-            <input type="submit" value="Submit" id="update_lastname_submit">
-          </form>
-
           Change Password
-          <form action={{url_for('user.user_edit_route')}} method='POST'>
             <input type="password" name="password1" value="" id="update_password1_input"><br>
-            Re-type Password<br>
+          Re-type Password<br>
             <input type="password" name="password2" value="" id="update_password2_input">
-            <input type="submit" value="Submit" id="update_password_submit">
-          </form>
-
           Change E-mail
-          <form action={{url_for('user.user_edit_route')}} method='POST'>
             <input type="text" name="email" value="" id="update_email_input">
-            <input type="submit" value="Submit" id="update_email_submit">
+            <input type="submit" value="Submit" id="update_submit">
           </form>
     {%endif%}
 
@@ -74,3 +63,5 @@
       	<footer>Authored: Ryan Pifer, Semptember 2016</footer>
     </p>
 {% endblock %}
+
+<script type="text/javascript" src="/static/js/user.js"></script>

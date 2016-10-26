@@ -1,6 +1,9 @@
 {% extends "base.html" %}
 {% block content %}
 
+
+	<div id="content"></div>
+
 	{%if inSession%}
 		<h1>Logged in as {{firstname}} {{lastname}}</h1>
 		<a href={{url_for('main.test_route')}} id="nav_home">Nav Home</a><br>

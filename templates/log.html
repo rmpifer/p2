@@ -7,7 +7,7 @@
 			</p>
 		{%endfor%}
 		<h1>Log In</h1><br>
-		<form action={{url_for('log.login_route')}} method='POST'>
+		<form id="submitLogin">
 			Username:
 			<input type="text" name="username" value="" id="login_username_input"><br>
 			Password:
@@ -15,5 +15,7 @@
 			<input type="submit" value="Submit" id="login_submit">
 		</form>
 	</p>
+
+	 <script type="text/javascript" src="/static/js/log.js"></script>
 
 {% endblock %}
