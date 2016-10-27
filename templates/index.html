@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
 
+
 	<meta name="description" content="Photo Album">
 	<meta name="author" content="Ryan Pifer">
 
@@ -10,10 +11,21 @@
     <p class="left">
       	<h1>Welcome to our Photo Album!</h1>
 
-      {%if not session.logged_in%}
+      {%if 'username' in session %}
+        <h1>Logged in as {{firstname}} {{lastname}}</h1>
+        <a href={{url_for('main.test_route')}} id="nav_home">Nav Home</a><br>
+        <a href={{url_for('user.user_edit_route')}} id='nav_edit')>Edit Account</a><br>
+        <a href={{url_for('albums.albums_route')}} id="nav_albums">My Albums</a><br>
+          <form id="nav_logout">
+            <input type="submit" value="Logout">
+          </form>
+      {% endif %}
+
+      {%if 'username' not in session %}
 
         <a href={{url_for('user.user_route')}} id="home_user_create">Create Account</a><br>
         <a href= {{url_for('log.login_route')}} id="home_login">Log in</a><br>
+      
 
         {%for user in users%}
           <a href={{url_for('albums.albums_route', username=user['username'])}}>{{user['username']}}</a><br>

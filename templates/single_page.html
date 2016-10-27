@@ -1,6 +1,11 @@
 {% extends "base.html" %}
 {% block content %}
-<div id="content"></div>
 
- <script type="text/javascript" src="/static/js/single_page.js"></script>
+     {%if 'username' not in session %}
+        <a href= {{url_for('log.login_route')}} id="home_login">Log in</a><br>
+      {% endif %}
+
+	<div id="content"></div>
+
+ 	<script type="text/javascript" src="/static/js/single_page.js"></script>
 {% endblock %}

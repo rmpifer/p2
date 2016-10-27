@@ -11,7 +11,9 @@
       </form>
 	{%endif%}
 
-
+     {%if 'username' not in session %}
+        <a href= {{url_for('log.login_route')}} id="home_login">Log in</a><br>
+      {% endif %}
 
 
     <h1>ALBUMS</h1>

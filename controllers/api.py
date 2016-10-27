@@ -1,8 +1,10 @@
 from flask import *
 from extensions import *
+from os import *
 import hashlib
 import uuid
 import re
+
 
 api = Blueprint('api', __name__, template_folder='templates')
 
@@ -185,6 +187,7 @@ def login_api_route():
 		checkUser = request.get_json()
 
 		if 'username' not in checkUser or 'password' not in checkUser:
+			print "could not find"
 			return jsonify({
 					"errors": {"message": "You did not provide the necessary fields"}
 				}), 422
@@ -192,7 +195,7 @@ def login_api_route():
 		inPassword = checkUser['password']
 
 
-		cur.execute('SELECT password FROM User WHERE username=%s', username)
+		cur.execute('SELECT password FROM User WHERE username=%s', [username])
 		password = cur.fetchall()
 		if len(password) == 0:
 			return jsonify({
@@ -236,7 +239,7 @@ def logout_api_route():
 				}), 401
 
 
-@api.route('/api/v1/album/albumid', methods=['GET'])
+@api.route('/api/v1/album/<albumid>', methods=['GET'])
 def album_api_route(albumid):
 
 	db = connect_to_database()
@@ -244,8 +247,10 @@ def album_api_route(albumid):
 
 	if request.method == 'GET':
 
+		print "test"
 		cur.execute("SELECT title, access FROM Album WHERE albumID = %s", albumid)
 		title = cur.fetchall()
+		print "server1"
 		if not title:
 			return jsonify({
 				"errors": {"message": "The requested resource could not be found"}
@@ -257,9 +262,13 @@ def album_api_route(albumid):
 
 				cur.execute("SELECT * FROM Album WHERE albumID=%s and username=%s", (albumid, session['username']))
 				owner = cur.fetchall()
+				print "server2"
+
 				if len(owner) == 0:
 					cur.execute("SELECT * FROM AlbumAccess WHERE username=%s AND albumID=%s", (session['username'], albumid))
 					permission = cur.fetchall()
+					print "server3"
+
 					if len(permission) == 0:
 						return jsonify({
 							"errors": {"message": "You do not have the necessary permissions for the resource"}
@@ -271,11 +280,12 @@ def album_api_route(albumid):
 
 		cur.execute('SELECT access, created, lastUpdate, title, username FROM Album WHERE albumID=%s', albumid)
 		albumInfo = cur.fetchall()
-		access = albumInfo['access']
-		created = albumInfo['created']
-		lastupdated = albumInfo['lastupdated']
-		title = albumInfo['title']
-		username = albumInfo['username']
+
+		access = albumInfo[0]['access']
+		created = albumInfo[0]['created']
+		lastupdated = albumInfo[0]['lastUpdate']
+		title = albumInfo[0]['title']
+		username = albumInfo[0]['username']
 
 		cur.execute('SELECT * FROM Contain JOIN Photo WHERE Contain.picid = Photo.picid AND Contain.albumID=%s', albumid)
 		pics = cur.fetchall()
@@ -293,7 +303,7 @@ def album_api_route(albumid):
 		return jsonify(album)
 
 
-@api.route('/api/v1/pic/picid', methods=['GET'])
+@api.route('/api/v1/pic/<picid>', methods=['GET'])
 def pic_api_route(picid):
 
 	db = connect_to_database()
@@ -301,7 +311,7 @@ def pic_api_route(picid):
 
 	if request.method == 'GET':
 
-		cur.execute("SELECT albumID FROM Contain WHERE picID = %s", picid)
+		cur.execute("SELECT albumID FROM Contain WHERE picID = %s", [picid])
 		albumid = cur.fetchall()
 		if not albumid:
 			return jsonify({
@@ -369,8 +379,8 @@ def pic_api_route(picid):
 
 		cur.execute("SELECT Photo.format, Contain.caption FROM Photo JOIN Contain WHERE Contain.picID=Photo.picID AND Contain.picID=%s", [picid])
 		pic = cur.fetchall()
-		format = pic['format']
-		caption = pic['caption']
+		format = pic[0]['format']
+		caption = pic[0]['caption']
 
 	elif request.method == 'PUT':
 		pic = request.get_json()
@@ -385,7 +395,7 @@ def pic_api_route(picid):
 		next = pic['next']
 		picid = pic['picid']
 
-		cur.execute('SELECT * FROM Photo WHERE picID=%s', picid)
+		cur.execute('SELECT * FROM Photo WHERE picID=%s', [picid])
 		if not cur.fetchall():
 			return jsonify({
 				"errors": {"message": "The requested resource could not be found"}
@@ -395,6 +405,7 @@ def pic_api_route(picid):
 		cur.execute('UPDATE Contain SET caption=%s WHERE picid=%s', (caption, picid))
 		cur.execute('UPDATE Album SET lastUpdate=CURRENT_TIMESTAMP() WHERE albumID=%s', albumid)
 
+	print format
 	picInfo = {
 		"albumid": albumid,
 		"caption": caption,

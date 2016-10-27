@@ -3,16 +3,6 @@
 
 	<meta name="author" content="Ryan Pifer">
 
-  {%if session.logged_in %}
-    <h1>Logged in as {{firstname}} {{lastname}}</h1>
-    <a href={{url_for('main.test_route')}} id="nav_home">Nav Home</a><br>
-    <a href={{url_for('user.user_edit_route')}} id='nav_edit')>Edit Account</a><br>
-    <a href={{url_for('albums.albums_route')}} id="nav_albums">My Albums</a><br>
-      <form id="nav_logout">
-        <input type="submit" value="Logout" id="nav_logout">
-      </form>
-  {%endif%}
-
   {%for error in message%}
     <p class="error">
       {{error}}
@@ -62,6 +52,7 @@
 
       	<footer>Authored: Ryan Pifer, Semptember 2016</footer>
     </p>
+
+    <script type="text/javascript" src="/static/js/user.js"></script>
 {% endblock %}
 
-<script type="text/javascript" src="/static/js/user.js"></script>
